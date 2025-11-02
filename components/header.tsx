@@ -23,7 +23,7 @@ const Header = () => {
     { name: "Home", path: "/" },
     { name: "Courses", path: "/courses" },
     { name: "Resources", path: "/resources" },
-    { name: "Profile", path: "/profile" },
+    { name: "Join Us", path: "/join-us" },
   ];
 
   return (
@@ -31,11 +31,10 @@ const Header = () => {
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled
           ? "backdrop-blur-md bg-white/80 shadow-md"
           : "bg-linear-to-r from-[#1E88E5]/90 to-[#43A047]/90"
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex justify-between items-center h-16">
         {/* Logo + Name */}
@@ -48,9 +47,8 @@ const Header = () => {
             className="rounded-full"
           />
           <span
-            className={`text-lg sm:text-xl font-bold transition-colors duration-300 ${
-              scrolled ? "text-gray-900" : "text-white drop-shadow-md"
-            }`}
+            className={`text-lg sm:text-xl font-bold transition-colors duration-300 ${scrolled ? "text-gray-900" : "text-white drop-shadow-md"
+              }`}
             style={{
               fontFamily: THEME.FONT.bold,
               letterSpacing: "0.3px",
@@ -59,7 +57,8 @@ const Header = () => {
             Right Path Schools
           </span>
         </div>
-
+        <Link className="text-sm font-medium text-[#1E88E5] hover:text-[#1E88E5]/80 bg-white px-4 py-2 rounded-full" href="/portal">Portal
+        </Link>
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           {navItems.map((item) => {
@@ -68,15 +67,14 @@ const Header = () => {
               <Link
                 key={item.name}
                 href={item.path}
-                className={`relative text-sm font-medium transition-colors duration-200 ${
-                  scrolled
+                className={`relative text-sm font-medium transition-colors duration-200 ${scrolled
                     ? isActive
                       ? "text-[#1E88E5]"
                       : "text-gray-800 hover:text-[#1E88E5]"
                     : isActive
                       ? "text-yellow-300"
                       : "text-white hover:text-yellow-200"
-                }`}
+                  }`}
                 style={{ fontFamily: THEME.FONT.medium }}
               >
                 {item.name}
@@ -94,9 +92,8 @@ const Header = () => {
         {/* Mobile Toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className={`md:hidden transition ${
-            scrolled ? "text-gray-800" : "text-white"
-          }`}
+          className={`md:hidden transition ${scrolled ? "text-gray-800" : "text-white"
+            }`}
         >
           {menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
@@ -119,11 +116,10 @@ const Header = () => {
                     key={item.name}
                     href={item.path}
                     onClick={() => setMenuOpen(false)}
-                    className={`font-medium transition ${
-                      isActive
+                    className={`font-medium transition ${isActive
                         ? "text-[#1E88E5]"
                         : "text-gray-800 hover:text-[#1E88E5]"
-                    }`}
+                      }`}
                     style={{ fontFamily: THEME.FONT.medium }}
                   >
                     {item.name}

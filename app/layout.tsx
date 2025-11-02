@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
+import { Toaster } from "react-hot-toast";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,18 +92,8 @@ export default function RootLayout({
         <Header />
 
         <main className="pt-16">{children}</main>
-
-        <footer className="text-center text-sm py-6 text-gray-600">
-          © {new Date().getFullYear()} Right Path Schools — Developed by{" "}
-          <a
-            href="https://www.jacodemy.com"
-            className="text-blue-600 hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Jacodemy
-          </a>
-        </footer>
+        <Toaster position="top-right" reverseOrder={false} />
+        <Footer />
       </body>
     </html>
   );
