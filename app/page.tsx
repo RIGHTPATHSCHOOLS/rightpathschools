@@ -2,10 +2,9 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { IoSchoolOutline, IoEarthOutline, IoLanguageOutline, IoLaptopOutline, IoPersonAddOutline, IoBookOutline, IoCallOutline, IoDownloadOutline } from "react-icons/io5";
 import THEME from "@/utils/theme";
-import WelcomeTyping from "@/components/welcome-text";
+import HeroBanner from "@/components/banner";
 
 const HomePage = () => {
   const router = useRouter();
@@ -49,19 +48,52 @@ const HomePage = () => {
 
   return (
     <div
-      className="min-h-screen p-6 md:p-10"
+      className="min-h-screen p-2 md:p-5"
       style={{
         background: `linear-gradient(135deg, ${THEME.COLORS.gradientBackground.join(",")})`,
       }}
     >
+      {/* 🔹 Themed Headings */}
+      <div className="text-center mt-2 mb-3">
+        <h1
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-2"
+          style={{
+            color: THEME.COLORS.primaryDark,
+            fontFamily: THEME.FONT.bold,
+            textShadow: `2px 2px 10px ${THEME.COLORS.secondary}33`,
+            letterSpacing: "0.05em",
+          }}
+        >
+          RIGHT PATH SCHOOLS
+        </h1>
+
+        <h3
+          className="text-lg sm:text-xl md:text-2xl font-medium"
+          style={{
+            color: THEME.COLORS.accent,
+            fontFamily: THEME.FONT.regular,
+          }}
+        >
+          Centre for Adult and Private Candidates
+        </h3>
+
+        {/* Accent line under title */}
+        <div
+          className="mx-auto mt-3 h-1 w-24 rounded-full"
+          style={{
+            background: `linear-gradient(to right, ${THEME.COLORS.primary}, ${THEME.COLORS.secondary})`,
+          }}
+        ></div>
+      </div>
+
       {/* 🔹 Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex flex-col items-center text-center my-12"
+        className="flex flex-col items-center text-center my-6"
       >
-        <WelcomeTyping />
+        <HeroBanner />
       </motion.div>
 
       {/* 🔹 Courses Grid */}

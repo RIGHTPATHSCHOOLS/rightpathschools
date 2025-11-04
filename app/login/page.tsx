@@ -33,48 +33,70 @@ const LoginPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!form.phone || !form.password) {
-      toast.error("Please fill in both fields.");
+  if (!form.phone || !form.password) {
+    toast.error("Please fill in both fields.");
+    return;
+  }
+
+  // ✅ Normalize phone number to 2547XXXXXXXX
+  const normalizePhoneNumber = (phone: string): string => {
+    let normalized = phone.trim();
+    normalized = normalized.replace(/[\s\-\(\)]/g, ""); // remove spaces/dashes/()
+
+    if (normalized.startsWith("+254")) {
+      normalized = "254" + normalized.slice(4);
+    } else if (normalized.startsWith("0")) {
+      normalized = "254" + normalized.slice(1);
+    } else if (normalized.startsWith("7")) {
+      normalized = "254" + normalized;
+    }
+    return normalized;
+  };
+
+  const normalizedPhone = normalizePhoneNumber(form.phone);
+
+  setLoading(true);
+
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone: normalizedPhone,
+        password: form.password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      toast.error(data.message || "Invalid credentials.");
       return;
     }
 
-    setLoading(true);
+    // ✅ Store token & user in Zustand
+    setUser(data.user, data.token);
 
-    try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: form.phone, password: form.password }),
+    if (data.forcePasswordChange) {
+      toast("⚠️ Please change your password before continuing.", {
+        icon: "🔑",
+        duration: 3000,
       });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        toast.error(data.message || "Invalid credentials.");
-        return;
-      }
-
-      // ✅ Store token & user in Zustand
-      setUser(data.user, data.token);
-
-      if (data.forcePasswordChange) {
-        toast("⚠️ Please change your password before continuing.", {
-          icon: "🔑",
-          duration: 3000,
-        });
-        router.push("/change-password");
-      } else {
-        toast.success("✅ Login successful! Redirecting...", { duration: 1500 });
-        setTimeout(() => router.push("/portal"), 1500);
-      }
-    } catch (error) {
-      toast.error("🚨 Network error. Try again later.");
-    } finally {
-      setLoading(false);
+      router.push("/change-password");
+    } else {
+      toast.success("✅ Login successful! Redirecting...", { duration: 1500 });
+      setTimeout(() => router.push("/portal"), 1500);
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error("🚨 Network error. Try again later.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div

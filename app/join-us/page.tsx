@@ -328,8 +328,8 @@ const JoinUsForm: React.FC = () => {
               {/* Step 4 */}
               {step === 4 && (
                 <FormSection icon={<IoBookOutline />} title="Course Details">
-                  <Select name="course" label="Course" value={form.course} onChange={handleChange} options={["Secondary", "Bridging", "Private KCSE Candidate"]} error={errors.course} />
-                  <Select name="modeOfStudy" label="Mode of Study" value={form.modeOfStudy} onChange={handleChange} options={["Full-time", "Evening", "Online"]} error={errors.modeOfStudy} />
+                  <Select name="course" label="Course" value={form.course} onChange={handleChange} options={["KCSE", "IGCSE", "LANGUAGES", "ICT"]} error={errors.course} />
+                  <Select name="modeOfStudy" label="Mode of Study" value={form.modeOfStudy} onChange={handleChange} options={["Early-Morning", "Day", "Weekend-Classes", "Evening", "Online"]} error={errors.modeOfStudy} />
                   <Select name="intakeMonth" label="Intake Month" value={form.intakeMonth} onChange={handleChange} options={months} error={errors.intakeMonth} />
                   <Input type="number" name="intakeYear" label="Intake Year" value={form.intakeYear} onChange={handleChange} error={errors.intakeYear} />
                 </FormSection>
