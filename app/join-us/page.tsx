@@ -84,7 +84,7 @@ const JoinUsForm: React.FC = () => {
     if (["surname", "lastName"].includes(name) && !/^[A-Za-z\s'-]+$/.test(value))
       return "Only letters allowed.";
 
-    if (["idNumber", "yearCompleted", "examScore", "intakeYear"].includes(name) && !/^\d+$/.test(value))
+    if (["idNumber", "yearCompleted", "intakeYear"].includes(name) && !/^\d+$/.test(value))
       return "Only numbers allowed.";
 
     if (name === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
@@ -92,6 +92,12 @@ const JoinUsForm: React.FC = () => {
 
     if (name === "phone" && !/^(?:\+?254|0)?7\d{8}$/.test(value))
       return "Enter a valid Kenyan phone (e.g. 0712345678)";
+
+    if (name === "examScore" && value) {
+      if (!/^\d+(\.\d+)?$|^[A-F][+-]?$/.test(value.trim().toUpperCase())) {
+        return "Enter a valid score or grade (e.g., 85, 92.5, A, B+).";
+      }
+    }
 
     if (name === "dateOfBirth" && value) {
       const dob = new Date(value);
@@ -130,39 +136,39 @@ const JoinUsForm: React.FC = () => {
   };
 
   // ---------------- HANDLE CHANGE ----------------
- const handleChange = (
-  e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-) => {
-  const target = e.target;
-  const { name, value, type } = target;
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const target = e.target;
+    const { name, value, type } = target;
 
-  const isCheckbox = type === "checkbox";
-  const checked = isCheckbox && (target as HTMLInputElement).checked;
+    const isCheckbox = type === "checkbox";
+    const checked = isCheckbox && (target as HTMLInputElement).checked;
 
-  // Only allow numbers for specific fields
-  if (
-    ["idNumber", "yearCompleted", "examScore", "intakeYear", "phone"].includes(name) &&
-    value &&
-    !/^\d*$/.test(value)
-  )
-    return;
+    // Only allow numbers for specific fields
+    if (
+      ["idNumber", "yearCompleted", "intakeYear", "phone"].includes(name) &&
+      value &&
+      !/^\d*$/.test(value)
+    )
+      return;
 
-  // Only allow letters for name fields
-  if (
-    ["surname", "lastName", "middleName"].includes(name) &&
-    value &&
-    !/^[A-Za-z\s'-]*$/.test(value)
-  )
-    return;
+    // Only allow letters for name fields
+    if (
+      ["surname", "lastName", "middleName"].includes(name) &&
+      value &&
+      !/^[A-Za-z\s'-]*$/.test(value)
+    )
+      return;
 
-  setForm((prev) => ({
-    ...prev,
-    [name]: isCheckbox ? checked : value,
-  }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: isCheckbox ? checked : value,
+    }));
 
-  const error = validateField(name, isCheckbox ? (checked ? "true" : "") : value);
-  setErrors((prev) => ({ ...prev, [name]: error }));
-};
+    const error = validateField(name, isCheckbox ? (checked ? "true" : "") : value);
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
 
 
   const nextStep = () => {
@@ -267,13 +273,12 @@ const JoinUsForm: React.FC = () => {
           {stepTitles.map((title, index) => (
             <div key={index} className="flex flex-col items-center w-full">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
-                  step > index
-                    ? "bg-green-500"
-                    : step === index + 1
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${step > index
+                  ? "bg-green-500"
+                  : step === index + 1
                     ? "bg-blue-600"
                     : "bg-gray-300"
-                }`}
+                  }`}
               >
                 {step > index ? <IoCheckmarkCircleOutline size={22} /> : index + 1}
               </div>
@@ -321,7 +326,16 @@ const JoinUsForm: React.FC = () => {
                   <Input name="previousSchool" label="Previous School" value={form.previousSchool} onChange={handleChange} error={errors.previousSchool} />
                   <Select name="educationLevel" label="Education Level" value={form.educationLevel} onChange={handleChange} options={["KCPE", "KCSE", "Diploma", "Certificate"]} error={errors.educationLevel} />
                   <Input type="number" name="yearCompleted" label="Year Completed" value={form.yearCompleted} onChange={handleChange} error={errors.yearCompleted} />
-                  <Input type="number" name="examScore" label="Exam Score / Grade" value={form.examScore} onChange={handleChange} error={errors.examScore} />
+                  <Input
+                    type="text"
+                    name="examScore"
+                    label="Exam Score / Grade"
+                    value={form.examScore}
+                    onChange={handleChange}
+                    placeholder="e.g., 85 or A+"
+                    error={errors.examScore}
+                  />
+
                 </FormSection>
               )}
 
@@ -476,17 +490,16 @@ const Button: React.FC<ButtonProps> = ({ type, onClick, children, disabled, colo
     color === "blue"
       ? "bg-blue-600 hover:bg-blue-700"
       : color === "green"
-      ? "bg-green-600 hover:bg-green-700"
-      : "bg-gray-400 hover:bg-gray-500";
+        ? "bg-green-600 hover:bg-green-700"
+        : "bg-gray-400 hover:bg-gray-500";
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center gap-2 px-6 py-2 text-white font-semibold rounded-lg transition ${colorClasses} ${
-        disabled ? "opacity-60 cursor-not-allowed" : ""
-      }`}
+      className={`flex items-center gap-2 px-6 py-2 text-white font-semibold rounded-lg transition ${colorClasses} ${disabled ? "opacity-60 cursor-not-allowed" : ""
+        }`}
     >
       {children}
     </button>

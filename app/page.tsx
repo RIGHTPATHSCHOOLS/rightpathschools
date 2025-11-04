@@ -2,7 +2,17 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { IoSchoolOutline, IoEarthOutline, IoLanguageOutline, IoLaptopOutline, IoPersonAddOutline, IoBookOutline, IoCallOutline, IoDownloadOutline } from "react-icons/io5";
+import {
+  IoSchoolOutline,
+  IoEarthOutline,
+  IoLanguageOutline,
+  IoLaptopOutline,
+  IoPersonAddOutline,
+  IoBookOutline,
+  IoCallOutline,
+  IoDownloadOutline,
+  IoArrowForwardOutline,
+} from "react-icons/io5";
 import THEME from "@/utils/theme";
 import HeroBanner from "@/components/banner";
 
@@ -41,9 +51,9 @@ const HomePage = () => {
   ];
 
   const quickActions = [
-    { title: "Join Us", icon: IoPersonAddOutline, color: THEME.COLORS.primary },
-    { title: "Resources", icon: IoBookOutline, color: THEME.COLORS.secondary },
-    { title: "Contact Us", icon: IoCallOutline, color: THEME.COLORS.accent },
+    { title: "Join Us", icon: IoPersonAddOutline, color: THEME.COLORS.primary, route: "/join-us" },
+    { title: "Resources", icon: IoBookOutline, color: THEME.COLORS.secondary, route: "/resources" },
+    { title: "Contact Us", icon: IoCallOutline, color: THEME.COLORS.accent, route: "/contact" },
   ];
 
   return (
@@ -96,6 +106,16 @@ const HomePage = () => {
         <HeroBanner />
       </motion.div>
 
+      <h3
+        className="text-lg sm:text-xl md:text-2xl font-medium justify-center flex mb-2"
+        style={{
+          color: THEME.COLORS.accent,
+          fontFamily: THEME.FONT.regular,
+        }}
+      >
+        Our Programs
+      </h3>
+
       {/* 🔹 Courses Grid */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -127,12 +147,18 @@ const HomePage = () => {
         transition={{ delay: 0.2, duration: 0.6 }}
         className="mt-12"
       >
-        <h2 className="text-2xl font-semibold mb-6 text-black">Quick Actions</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-black justify-center flex">
+          Quick Actions
+        </h2>
+
         <div className="grid grid-cols-3 gap-4">
           {quickActions.map((action, i) => (
-            <div
+            <motion.div
               key={i}
-              className="bg-white rounded-2xl p-6 flex flex-col items-center shadow-md hover:shadow-lg transition"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => router.push(action.route)}
+              className="cursor-pointer bg-white rounded-2xl p-6 flex flex-col items-center shadow-md hover:shadow-lg transition group"
             >
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
@@ -140,8 +166,17 @@ const HomePage = () => {
               >
                 <action.icon size={26} color={action.color} />
               </div>
-              <p className="text-gray-700 text-sm">{action.title}</p>
-            </div>
+
+              {/* Title + Animated Arrow */}
+              <div className="flex items-center gap-1 text-gray-700 text-sm font-medium">
+                <p>{action.title}</p>
+                <IoArrowForwardOutline
+                  size={16}
+                  color={action.color}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>
@@ -166,8 +201,8 @@ const HomePage = () => {
           </p>
 
           <button
-            onClick={() => router.push("/downloads")}
-            className="flex items-center justify-center gap-2 mx-auto bg-white text-blue-700 font-medium py-3 px-6 rounded-lg shadow hover:bg-gray-100 transition"
+            onClick={() => router.push("/resources")}
+            className="flex items-center justify-center gap-2 mx-auto bg-white text-blue-700 font-medium py-3 px-6 rounded-lg shadow hover:bg-gray-100 transition cursor-pointer"
           >
             <IoDownloadOutline size={20} />
             View All Requirements

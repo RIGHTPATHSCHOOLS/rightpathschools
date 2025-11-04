@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/header";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer";
+import ChatWidget from "@/components/chatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,7 +91,7 @@ export default function RootLayout({
       >
         {/* ✅ Sticky, modern header across all pages */}
         <Header />
-
+        <ChatWidget />
         <main className="pt-16">{children}</main>
         <Toaster position="top-right" reverseOrder={false} />
         <Footer />

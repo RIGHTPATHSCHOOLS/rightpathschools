@@ -23,6 +23,8 @@ const Footer: React.FC = () => {
             Empowering adults and private candidates in Kenya to achieve
             academic excellence through flexible, affordable learning.
           </p>
+          <Link className="text-sm mt-2 opacity-90 bg-[#FFB300] py-2 px-4 inline-block rounded-lg" href={"/about-us"}>About Us</Link>
+          <Link className="text-sm mt-2 opacity-90 bg-[#FFB300] py-2 px-4 inline-block rounded-lg ml-3" href={"/contact"}>Contact Us</Link>
         </div>
 
         {/* 📞 Column 2 - Contact */}
