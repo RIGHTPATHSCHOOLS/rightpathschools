@@ -22,28 +22,28 @@ const HomePage = () => {
   const courses = [
     {
       title: "KCSE PRIVATE CANDIDATES",
-      count: 4,
+      count: 8,
       icon: IoSchoolOutline,
       color: THEME.COLORS.primary,
       route: "/requirements/kcse",
     },
     {
       title: "IGCSE PRIVATE CANDIDATES",
-      count: 1,
+      count: 4,
       icon: IoEarthOutline,
       color: THEME.COLORS.secondary,
       route: "/requirements/igcse",
     },
     {
       title: "LANGUAGES",
-      count: 0,
+      count: 6,
       icon: IoLanguageOutline,
       color: THEME.COLORS.accent,
       route: "/requirements/languages",
     },
     {
       title: "ICT",
-      count: 3,
+      count: 8,
       icon: IoLaptopOutline,
       color: THEME.COLORS.info,
       route: "/requirements/ict",

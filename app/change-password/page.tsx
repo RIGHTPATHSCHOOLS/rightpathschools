@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { motion } from "framer-motion";
 import {
   IoLockClosedOutline,
@@ -21,13 +21,24 @@ const ChangePasswordPage: React.FC = () => {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const [phone, setPhone] = useState<string | null>("");
 
   // 👁️ Toggles for password visibility
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const phone = typeof window !== "undefined" ? localStorage.getItem("phone") : "";
+  useEffect(() => {
+    const storedPhone = localStorage.getItem("phone");
+    if (storedPhone) {
+      setPhone(storedPhone);
+    } else {
+      toast.error("⚠️ Missing phone number. Please log in again.");
+      setTimeout(() => router.push("/login"), 2000);
+    }
+
+    console.log("API_URL:", API_URL);
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,8 +59,7 @@ const ChangePasswordPage: React.FC = () => {
     }
 
     if (!phone) {
-      toast.error("Phone number missing. Please login again.");
-      router.push("/login");
+      toast.error("Phone number missing. Please log in again.");
       return;
     }
 
@@ -67,14 +77,17 @@ const ChangePasswordPage: React.FC = () => {
       });
 
       const data = await res.json();
+      console.log("Response:", data);
 
-      if (res.ok && data.success) {
-        toast.success(data.message || "OTP sent to WhatsApp!");
-        router.push("/verify-otp");
+      if (res.ok && data.success && data.step === "verify-otp") {
+        toast.success("✅ OTP sent! Please verify on WhatsApp.");
+        localStorage.setItem("phone", phone);
+        setTimeout(() => router.push("/verify-otp"), 1500);
       } else {
         toast.error(data.message || "Failed to initiate password change.");
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("🚨 Network error. Try again later.");
     } finally {
       setLoading(false);
@@ -90,88 +103,45 @@ const ChangePasswordPage: React.FC = () => {
         transition={{ duration: 0.6 }}
         className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md"
       >
-        <h1 className="text-center text-2xl font-bold mb-6">Change Password</h1>
+        <h1 className="text-center text-2xl font-bold mb-6 text-gray-800">
+          Change Password
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Old Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Old Password
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 relative focus-within:ring-2 focus-within:ring-blue-500">
-              <IoLockClosedOutline className="text-gray-500 mr-2" />
-              <input
-                type={showOld ? "text" : "password"}
-                name="oldPassword"
-                value={form.oldPassword}
-                onChange={handleChange}
-                placeholder="Enter current password"
-                className="w-full focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowOld((prev) => !prev)}
-                className="absolute right-3 text-gray-500 hover:text-gray-700"
-                aria-label={showOld ? "Hide password" : "Show password"}
-              >
-                {showOld ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
-              </button>
-            </div>
-          </div>
+          <PasswordField
+            label="Old Password"
+            name="oldPassword"
+            value={form.oldPassword}
+            onChange={handleChange}
+            show={showOld}
+            toggleShow={() => setShowOld((p) => !p)}
+            icon={<IoLockClosedOutline className="text-gray-500 mr-2" />}
+          />
 
           {/* New Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              New Password
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 relative focus-within:ring-2 focus-within:ring-blue-500">
-              <IoKeyOutline className="text-gray-500 mr-2" />
-              <input
-                type={showNew ? "text" : "password"}
-                name="newPassword"
-                value={form.newPassword}
-                onChange={handleChange}
-                placeholder="Enter new password"
-                className="w-full focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowNew((prev) => !prev)}
-                className="absolute right-3 text-gray-500 hover:text-gray-700"
-                aria-label={showNew ? "Hide password" : "Show password"}
-              >
-                {showNew ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
-              </button>
-            </div>
-          </div>
+          <PasswordField
+            label="New Password"
+            name="newPassword"
+            value={form.newPassword}
+            onChange={handleChange}
+            show={showNew}
+            toggleShow={() => setShowNew((p) => !p)}
+            icon={<IoKeyOutline className="text-gray-500 mr-2" />}
+          />
 
           {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm New Password
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 relative focus-within:ring-2 focus-within:ring-blue-500">
-              <IoKeyOutline className="text-gray-500 mr-2" />
-              <input
-                type={showConfirm ? "text" : "password"}
-                name="confirmPassword"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm new password"
-                className="w-full focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm((prev) => !prev)}
-                className="absolute right-3 text-gray-500 hover:text-gray-700"
-                aria-label={showConfirm ? "Hide password" : "Show password"}
-              >
-                {showConfirm ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
-              </button>
-            </div>
-          </div>
+          <PasswordField
+            label="Confirm New Password"
+            name="confirmPassword"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            show={showConfirm}
+            toggleShow={() => setShowConfirm((p) => !p)}
+            icon={<IoKeyOutline className="text-gray-500 mr-2" />}
+          />
 
-          {/* Submit Button */}
+          {/* Submit */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             type="submit"
@@ -189,5 +159,49 @@ const ChangePasswordPage: React.FC = () => {
     </div>
   );
 };
+
+// Reusable password input field
+const PasswordField = ({
+  label,
+  name,
+  value,
+  onChange,
+  show,
+  toggleShow,
+  icon,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  show: boolean;
+  toggleShow: () => void;
+  icon: React.ReactNode;
+}) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 relative focus-within:ring-2 focus-within:ring-blue-500">
+      {icon}
+      <input
+        type={show ? "text" : "password"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={`Enter ${label.toLowerCase()}`}
+        className="w-full focus:outline-none"
+      />
+      <button
+        type="button"
+        onClick={toggleShow}
+        className="absolute right-3 text-gray-500 hover:text-gray-700"
+        aria-label={show ? "Hide password" : "Show password"}
+      >
+        {show ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+      </button>
+    </div>
+  </div>
+);
 
 export default ChangePasswordPage;

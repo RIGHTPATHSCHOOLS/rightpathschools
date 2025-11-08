@@ -6,52 +6,57 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const RESEND_COOLDOWN = 60; // seconds
-
 const OTP_LENGTH = 6;
+const RESEND_COOLDOWN = 60; // seconds
 
 const VerifyOtpPage: React.FC = () => {
     const router = useRouter();
     const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
     const [loading, setLoading] = useState(false);
     const [resendTimer, setResendTimer] = useState(0);
-
     const inputsRef = useRef<HTMLInputElement[]>([]);
-    const phone = typeof window !== "undefined" ? localStorage.getItem("phone") : "";
 
-    // Auto-focus first input on mount
+    const phone =
+        typeof window !== "undefined" ? localStorage.getItem("phone") : "";
+
+    // Auto-focus first input
     useEffect(() => {
         inputsRef.current[0]?.focus();
     }, []);
 
-    // Countdown for resend OTP
+    // Countdown timer
     useEffect(() => {
         if (resendTimer <= 0) return;
-        const timer = setInterval(() => setResendTimer((prev) => prev - 1), 1000);
+        const timer = setInterval(() => setResendTimer((t) => t - 1), 1000);
         return () => clearInterval(timer);
     }, [resendTimer]);
 
+    // ✅ Handle OTP input changes
     const handleChange = (value: string, index: number) => {
-        if (!/^\d*$/.test(value)) return; // only numbers
+        if (!/^\d*$/.test(value)) return; // numbers only
         const newOtp = [...otp];
         newOtp[index] = value;
         setOtp(newOtp);
 
+        // Auto-move to next input
         if (value && index < OTP_LENGTH - 1) {
             inputsRef.current[index + 1]?.focus();
         }
 
-        if (newOtp.every((d) => d !== "")) {
+        // Auto-submit if all digits filled
+        if (newOtp.every((v) => v !== "")) {
             verifyOtp(newOtp.join(""));
         }
     };
 
+    // ✅ Backspace navigation
     const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
         if (e.key === "Backspace" && !otp[index] && index > 0) {
             inputsRef.current[index - 1]?.focus();
         }
     };
 
+    // ✅ Verify OTP
     const verifyOtp = async (otpCode: string) => {
         if (!phone) {
             toast.error("Phone number missing. Please login again.");
@@ -71,8 +76,11 @@ const VerifyOtpPage: React.FC = () => {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                toast.success(data.message || "Password successfully changed!");
-                router.push("/portal");
+                toast.success(data.message || "✅ Verified successfully!");
+                // optional: clear otp
+                setOtp(Array(OTP_LENGTH).fill(""));
+                // redirect after delay
+                setTimeout(() => router.push("/portal"), 1000);
             } else {
                 toast.error(data.message || "Invalid OTP.");
                 setOtp(Array(OTP_LENGTH).fill(""));
@@ -85,8 +93,13 @@ const VerifyOtpPage: React.FC = () => {
         }
     };
 
+    // ✅ Resend OTP
     const resendOtp = async () => {
-        if (!phone) return;
+        if (!phone) {
+            toast.error("Phone missing. Please login again.");
+            router.push("/login");
+            return;
+        }
 
         if (resendTimer > 0) return;
 
@@ -120,8 +133,11 @@ const VerifyOtpPage: React.FC = () => {
                 className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md"
             >
                 <h1 className="text-center text-2xl font-bold mb-3">Verify OTP</h1>
-                <p className="text-center mb-5 text-gray-600">Enter the 6-digit code sent to your WhatsApp</p>
+                <p className="text-center mb-5 text-gray-600">
+                    Enter the 6-digit code sent to your WhatsApp
+                </p>
 
+                {/* OTP Inputs */}
                 <div className="flex justify-between space-x-2 mb-4">
                     {otp.map((digit, i) => (
                         <input
@@ -140,6 +156,7 @@ const VerifyOtpPage: React.FC = () => {
                     ))}
                 </div>
 
+                {/* Resend Button */}
                 <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={resendOtp}
@@ -149,10 +166,14 @@ const VerifyOtpPage: React.FC = () => {
                             : "bg-green-600 hover:bg-green-700"
                         }`}
                 >
-                    {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+                    {resendTimer > 0
+                        ? `Resend OTP in ${resendTimer}s`
+                        : "Resend OTP"}
                 </motion.button>
 
-                {loading && <p className="text-center mt-2 text-gray-500">Verifying...</p>}
+                {loading && (
+                    <p className="text-center mt-2 text-gray-500">Verifying...</p>
+                )}
             </motion.div>
         </div>
     );

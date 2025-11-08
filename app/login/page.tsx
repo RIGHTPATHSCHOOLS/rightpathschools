@@ -27,24 +27,9 @@ const LoginPage: React.FC = () => {
   // ✅ Zustand actions
   const { setUser } = useAuthStore();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-
-  if (!form.phone || !form.password) {
-    toast.error("Please fill in both fields.");
-    return;
-  }
-
-  // ✅ Normalize phone number to 2547XXXXXXXX
+  // Normalize Kenyan phone number to format 2547XXXXXXXX
   const normalizePhoneNumber = (phone: string): string => {
-    let normalized = phone.trim();
-    normalized = normalized.replace(/[\s\-\(\)]/g, ""); // remove spaces/dashes/()
-
+    let normalized = phone.trim().replace(/[\s\-\(\)]/g, ""); // remove spaces, dashes, ()
     if (normalized.startsWith("+254")) {
       normalized = "254" + normalized.slice(4);
     } else if (normalized.startsWith("0")) {
@@ -55,48 +40,67 @@ const LoginPage: React.FC = () => {
     return normalized;
   };
 
-  const normalizedPhone = normalizePhoneNumber(form.phone);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-  setLoading(true);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-  try {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        phone: normalizedPhone,
-        password: form.password,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      toast.error(data.message || "Invalid credentials.");
+    if (!form.phone || !form.password) {
+      toast.error("Please fill in both fields.");
       return;
     }
 
-    // ✅ Store token & user in Zustand
-    setUser(data.user, data.token);
+    const normalizedPhone = normalizePhoneNumber(form.phone);
+    setLoading(true);
 
-    if (data.forcePasswordChange) {
-      toast("⚠️ Please change your password before continuing.", {
-        icon: "🔑",
-        duration: 3000,
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: normalizedPhone,
+          password: form.password,
+        }),
       });
-      router.push("/change-password");
-    } else {
-      toast.success("✅ Login successful! Redirecting...", { duration: 1500 });
-      setTimeout(() => router.push("/portal"), 1500);
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error("🚨 Network error. Try again later.");
-  } finally {
-    setLoading(false);
-  }
-};
 
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        toast.error(data.message || "Invalid credentials.");
+        return;
+      }
+
+      // ✅ Store token & user in Zustand
+      setUser(data.user, data.token);
+
+      // Optional: persist token in localStorage (if needed)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("phone", normalizedPhone);
+
+      if (data.forcePasswordChange) {
+        toast("⚠️ Please change your password before continuing.", {
+          icon: "🔑",
+          duration: 3000,
+        });
+        router.push("/change-password");
+      } else if (data.step === "verify-otp") {
+        // ✅ Handle OTP flow if backend requires verification
+        toast.success("OTP sent! Please verify.");
+        router.push("/verify-otp");
+      } else {
+        toast.success("✅ Login successful! Redirecting...", { duration: 1500 });
+        setTimeout(() => router.push("/portal"), 1500);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("🚨 Network error. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -163,7 +167,11 @@ const LoginPage: React.FC = () => {
                 className="absolute right-3 text-gray-500 hover:text-gray-700"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+                {showPassword ? (
+                  <IoEyeOffOutline size={20} />
+                ) : (
+                  <IoEyeOutline size={20} />
+                )}
               </button>
             </div>
           </div>
@@ -192,7 +200,10 @@ const LoginPage: React.FC = () => {
         </div>
 
         <div className="text-center mt-3">
-          <Link href="/forgot-password" className="text-gray-500 text-sm underline">
+          <Link
+            href="/forgot-password"
+            className="text-gray-500 text-sm underline"
+          >
             Forgot Password?
           </Link>
         </div>

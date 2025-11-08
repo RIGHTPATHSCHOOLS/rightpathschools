@@ -21,6 +21,7 @@ const Header = () => {
 
   const navItems = [
     { name: "Home", path: "/" },
+    { name: "Student Life", path: "/student-life" },
     { name: "Courses", path: "/courses" },
     { name: "Resources", path: "/resources" },
     { name: "Join Us", path: "/join-us" },
@@ -38,7 +39,8 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex justify-between items-center h-16">
         {/* Logo + Name */}
-        <div className="flex items-center gap-3">
+       {/* 🔗 Logo + Name linked to Home */}
+        <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.png"
             alt="Right Path Logo"
@@ -47,8 +49,9 @@ const Header = () => {
             className="rounded-full"
           />
           <span
-            className={`text-lg sm:text-xl font-bold transition-colors duration-300 ${scrolled ? "text-gray-900" : "text-white drop-shadow-md"
-              }`}
+            className={`text-lg sm:text-xl font-bold transition-colors duration-300 ${
+              scrolled ? "text-gray-900" : "text-white drop-shadow-md"
+            }`}
             style={{
               fontFamily: THEME.FONT.bold,
               letterSpacing: "0.3px",
@@ -56,7 +59,7 @@ const Header = () => {
           >
             Right Path Schools
           </span>
-        </div>
+        </Link>
         <Link className="text-sm font-medium text-[#1E88E5] hover:text-[#1E88E5]/80 bg-white px-4 py-2 rounded-full" href="/portal">Portal
         </Link>
         {/* Desktop Navigation */}

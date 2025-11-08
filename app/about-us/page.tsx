@@ -124,24 +124,24 @@ const AboutPage = () => {
 
   const team = [
     {
-      name: "Mr. Dominic K.",
+      name: "Mr. Dominic O.",
       role: "Director & Founder",
       desc: "Visionary leader driving Right Path Schools’ mission of empowering learners through accessible education.",
-      img: "/team/director.jpg",
+      img: "/team/director.jpeg",
       color: THEME.COLORS.primary,
     },
     {
       name: "Ms. Faith N.",
       role: "Head of Academics",
       desc: "Dedicated to ensuring academic excellence and quality curriculum delivery for all learners.",
-      img: "/team/academics.jpg",
+      img: "/team/academics.jpeg",
       color: THEME.COLORS.secondary,
     },
     {
       name: "Mr. Peter L.",
       role: "ICT & E-Learning Lead",
       desc: "Championing technology-driven education to make flexible learning possible for all students.",
-      img: "/team/ict.jpg",
+      img: "/team/ict.jpeg",
       color: THEME.COLORS.accent,
     },
   ];

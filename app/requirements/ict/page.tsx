@@ -1,4 +1,3 @@
-// app/ict/page.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -9,28 +8,26 @@ import {
   FaDatabase,
   FaNetworkWired,
   FaUserGraduate,
-  FaMoneyCheckAlt,
   FaTools,
   FaGlobe,
+  FaInfoCircle,
   FaChevronDown,
   FaChevronUp,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaMapMarkerAlt,
+  FaClock,
 } from "react-icons/fa";
+import Link from "next/link";
 
 const { COLORS, TEXT, BUTTON, CARD, FONT } = THEME;
 
 /* ---------------------------
    Utility animation helpers
-   --------------------------- */
+--------------------------- */
 const fade = (d = 0) => ({
   initial: { opacity: 0, y: 18 },
   whileInView: { opacity: 1, y: 0 },
   transition: { duration: 0.6, delay: d },
   viewport: { once: true, amount: 0.2 },
 });
-
 const pop = (d = 0) => ({
   initial: { opacity: 0, scale: 0.98 },
   whileInView: { opacity: 1, scale: 1 },
@@ -40,8 +37,7 @@ const pop = (d = 0) => ({
 
 /* ---------------------------
    Small UI building blocks
-   --------------------------- */
-
+--------------------------- */
 const SectionTitle: React.FC<{ icon?: React.ReactNode; title: string }> = ({ icon, title }) => (
   <div className="flex items-center gap-3 mb-4">
     {icon && (
@@ -63,7 +59,6 @@ const SectionTitle: React.FC<{ icon?: React.ReactNode; title: string }> = ({ ico
   </div>
 );
 
-/* Expandable course card with animation */
 const ExpandCard: React.FC<{
   title: string;
   subtitle?: string;
@@ -118,54 +113,21 @@ const ExpandCard: React.FC<{
   );
 };
 
-/* A simple accordion used for admission & fees */
-const Accordion: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="mb-3 border rounded-lg overflow-hidden" style={{ borderColor: COLORS.border }}>
-      <button
-        onClick={() => setOpen((s) => !s)}
-        className="w-full p-4 flex items-center justify-between bg-white"
-      >
-        <div className="text-left">
-          <div style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>{title}</div>
-        </div>
-        <div className="text-gray-500">{open ? <FaChevronUp /> : <FaChevronDown />}</div>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35 }}
-            className="p-4 bg-white text-sm text-gray-700"
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
 /* Flip card for short courses */
 const FlipCard: React.FC<{ title: string; meta: string; details: string }> = ({ title, meta, details }) => {
   const [flipped, setFlipped] = useState(false);
   return (
     <div
       onClick={() => setFlipped((s) => !s)}
-      className={`relative cursor-pointer w-full h-44 perspective`}
+      className="relative cursor-pointer w-full h-44 perspective"
     >
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
         transition={{ duration: 0.6 }}
         className="relative w-full h-full"
-        style={{
-          transformStyle: "preserve-3d",
-        }}
+        style={{ transformStyle: "preserve-3d" }}
       >
-        {/* front */}
+        {/* front side */}
         <div
           className="absolute inset-0 p-4 rounded-lg flex flex-col justify-between"
           style={{
@@ -180,7 +142,7 @@ const FlipCard: React.FC<{ title: string; meta: string; details: string }> = ({ 
           <div className="text-xs">{meta}</div>
         </div>
 
-        {/* back */}
+        {/* back side */}
         <div
           className="absolute inset-0 p-4 rounded-lg"
           style={{
@@ -202,78 +164,78 @@ const FlipCard: React.FC<{ title: string; meta: string; details: string }> = ({ 
 
 /* ---------------------------
    Data (selected / relevant)
-   --------------------------- */
-
+--------------------------- */
 const courses = [
   {
-    title: "Information Communication Technology (ICT)",
+    title: "Full-Stack Web & Mobile Development",
     level: "Certificate / Diploma",
-    duration: "1 – 2 years",
-    grade: "D & Above (Cert) / C- & Above (Dip)",
-    exam: "KNEC",
-    fee: "Ksh 15,000 / term",
-    terms: "4",
+    duration: "6 – 24 months",
+    grade: "Open",
+    exam: "Internal / JP-UK",
+    technologies: "JavaScript, Next.js, React, React Native, Node.js",
   },
   {
-    title: "Programming & Software Engineering",
-    level: "Certificate / Diploma",
-    duration: "6 months – 1 year",
+    title: "Payment & Messaging Integrations",
+    level: "Professional Module",
+    duration: "3 – 6 months",
     grade: "Open",
-    exam: "JP-UK / Internal",
-    fee: "Ksh 18,000 / term",
-    terms: "2–4",
+    exam: "Internal",
+    technologies: "MPESA STK Integration, WhatsApp Business API, Chatbots",
   },
   {
     title: "Cyber Security & Networking",
     level: "Diploma / Professional",
-    duration: "9 months – 1 year",
+    duration: "9 – 12 months",
     grade: "C- & Above",
     exam: "ICM / JP-UK",
-    fee: "Ksh 15,000 / term",
-    terms: "2–4",
+    technologies: "Ethical Hacking, Network Setup, Penetration Testing",
   },
   {
-    title: "Data Analytics (SPSS, PowerBI)",
+    title: "Data Analytics & Cloud Solutions",
     level: "Short Course / Professional",
-    duration: "4 weeks – 2 months",
+    duration: "4 – 8 weeks",
     grade: "Open",
     exam: "Internal",
-    fee: "Ksh 10,000",
-    terms: "1",
-  },
-  {
-    title: "Computer Repair & Maintenance",
-    level: "Certificate",
-    duration: "3 months",
-    grade: "Open",
-    exam: "CISAK Kenya",
-    fee: "Ksh 15,000",
-    terms: "1",
-  },
-  {
-    title: "Web Development (HTML/CSS/JS/PHP/MySQL)",
-    level: "Short / Diploma",
-    duration: "1 month – 9 months",
-    grade: "Open",
-    exam: "Internal / CISAK",
-    fee: "Ksh 5,000 – 30,000",
-    terms: "1–4",
+    technologies: "PowerBI, SPSS, Cloud Platforms",
   },
 ];
 
 const shortCourses = [
-  { title: "Advanced Excel & SPSS", meta: "4 weeks • Ksh 10,000", details: "Data wrangling, pivot tables, basic SPSS workflows, practical exercises." },
-  { title: "Graphic Design (Photoshop/Illustrator)", meta: "3 months • Ksh 12,000", details: "Core design workflows, typography, branding, practical project." },
-  { title: "AutoCAD / Revit", meta: "3 months • Ksh 15,000", details: "2D drafting, 3D modeling basics, Revit fundamentals." },
-  { title: "QuickBooks / Tally", meta: "1 month • Ksh 6,000", details: "Practical accounting packages for SMEs, invoicing and reports." },
-  { title: "Data Analytics (PowerBI)", meta: "6 weeks • Ksh 12,000", details: "PowerBI desktop, DAX basics, dashboarding and storytelling." },
-  { title: "Web Dev Bootcamp (HTML/CSS/JS)", meta: "3 weeks • Ksh 5,000", details: "Hands-on projects, responsive layout, JS essentials." },
+  {
+    title: "Web Dev Bootcamp (HTML/CSS/JS)",
+    meta: "3 weeks • Intensive",
+    details: "Hands-on responsive layouts, JavaScript fundamentals, project based learning.",
+  },
+  {
+    title: "React & Next.js Mini-Project",
+    meta: "4 weeks • Practical",
+    details: "Build a real web application using Next.js, React components, routing and deployment.",
+  },
+  {
+    title: "React Native Mobile App Sprint",
+    meta: "6 weeks • App Build",
+    details: "Cross-platform mobile app development with React Native and Expo.",
+  },
+  {
+    title: "MPESA & Payment Gateway Integration",
+    meta: "2 weeks • Practical",
+    details: "Integrate MPESA STK Push, webhook handling, secure payments in Kenyan context.",
+  },
+  {
+    title: "WhatsApp Business & Chatbot Workshop",
+    meta: "3 weeks • Live",
+    details: "Automate customer messaging with WhatsApp Business API, build chatbots in Node.js.",
+  },
+  {
+    title: "Cyber Security Essentials",
+    meta: "4 weeks • Fundamentals",
+    details: "Network defenses, threat modelling, ethical hacking basics and labs.",
+  },
 ];
 
 /* ---------------------------
    Page Layout
-   --------------------------- */
-
+--------------------------- */
 export default function IctPage() {
   return (
     <main
@@ -296,17 +258,15 @@ export default function IctPage() {
         <div className="md:flex md:items-center md:justify-between gap-6">
           <div>
             <h1 style={{ ...TEXT.h1, color: COLORS.primaryDark }} className="mb-2">
-              School of ICT & Computer Studies
+              School of ICT & Digital Innovation
             </h1>
             <p className="text-sm md:text-base text-gray-700 max-w-2xl">
-              Right Path Schools — Fully accredited by KNEC, KASNEB & TVETA.
-              Practical, industry-aligned ICT training: Programming, Cyber Security, Networking, Data
-              Analytics and more.
+              Right Path Schools — Industry-aligned training in JavaScript, Next.js, React Native, MPESA integrations, WhatsApp Business & chatbots.
             </p>
 
             <div className="mt-4 flex flex-wrap gap-3">
-              <a
-                href="#apply"
+              <Link
+                href="/join-us"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg shadow-md"
                 style={{
                   background: BUTTON.primary.backgroundColor,
@@ -314,7 +274,7 @@ export default function IctPage() {
                 }}
               >
                 Apply Now
-              </a>
+              </Link>
 
               <a
                 href="#prospectus"
@@ -346,54 +306,48 @@ export default function IctPage() {
                 <div>
                   <div className="text-sm font-semibold">Contact</div>
                   <div className="text-xs text-gray-700">+254 758 982 859</div>
+                  <div className="text-xs text-gray-600">righttrackschools2025@gmail.com</div>
                 </div>
-              </div>
-
-              <div className="mt-4 text-xs text-gray-600">
-                <div className="text-xs text-gray-700">righttrackschools2025@gmail.com</div>
-                <br />
-                8th Flr, Mwalimu Co-op House, Tom Mboya Street, Nairobi
               </div>
             </div>
           </div>
         </div>
       </motion.header>
 
-      {/* Overview (Vision / Mission / Accreditation) */}
+      {/* Overview */}
       <motion.section {...fade(0.1)} className="mb-10">
         <SectionTitle icon={<FaUserGraduate />} title="Overview" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <motion.div {...pop(0.05)} className="p-4 rounded-lg" style={{ background: COLORS.surfaceLight, boxShadow: `0 8px 20px ${COLORS.shadow}` }}>
             <h4 style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>Vision</h4>
-            <p className="text-sm text-gray-700 mt-2">To produce competent ICT professionals with hands-on digital skills.</p>
+            <p className="text-sm text-gray-700 mt-2">To empower learners with practical digital skills and transform them into industry-ready professionals.</p>
           </motion.div>
 
           <motion.div {...pop(0.1)} className="p-4 rounded-lg" style={{ background: COLORS.surfaceLight, boxShadow: `0 8px 20px ${COLORS.shadow}` }}>
             <h4 style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>Mission</h4>
-            <p className="text-sm text-gray-700 mt-2">To equip learners with technical, analytical and problem-solving skills through practical ICT education.</p>
+            <p className="text-sm text-gray-700 mt-2">To deliver hands-on training in cutting-edge technologies including web & mobile development, payment systems and automation.</p>
           </motion.div>
 
           <motion.div {...pop(0.15)} className="p-4 rounded-lg" style={{ background: COLORS.surfaceLight, boxShadow: `0 8px 20px ${COLORS.shadow}` }}>
             <h4 style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>Accreditation</h4>
-            <p className="text-sm text-gray-700 mt-2">Fully accredited by KNEC, KASNEB and TVETA — recognized national and international qualifications.</p>
+            <p className="text-sm text-gray-700 mt-2">Fully accredited by KNEC, KASNEB & TVETA — qualifications recognized locally and internationally.</p>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* Course Categories (Expandable) */}
+      {/* Course Categories */}
       <motion.section {...fade(0.15)} className="mb-12">
         <SectionTitle icon={<FaDatabase />} title="Course Categories" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses.map((c) => (
-            <motion.div key={c.title} {...pop(0.05)} className="">
+          {courses.map((c, i) => (
+            <motion.div key={c.title} {...pop(i * 0.05)}>
               <ExpandCard
                 title={c.title}
                 subtitle={`${c.level} • ${c.duration}`}
                 items={{
                   "Entry Grade": c.grade,
                   "Exam Body": c.exam,
-                  "Fee": c.fee,
-                  "No. of Terms": c.terms,
+                  "Technologies": c.technologies,
                 }}
               />
             </motion.div>
@@ -401,11 +355,11 @@ export default function IctPage() {
         </div>
       </motion.section>
 
-      {/* Short Courses – Flip Cards */}
+      {/* Short Courses */}
       <motion.section {...fade(0.2)} className="mb-12">
-        <SectionTitle icon={<FaTools />} title="Short Courses & Packages" />
+        <SectionTitle icon={<FaTools />} title="Short Courses & Bootcamps" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {shortCourses.map((s) => (
+          {shortCourses.map((s, i) => (
             <div key={s.title} className="h-44">
               <FlipCard title={s.title} meta={s.meta} details={s.details} />
             </div>
@@ -413,62 +367,9 @@ export default function IctPage() {
         </div>
       </motion.section>
 
-      {/* Fees & Admission Accordion */}
-      <motion.section {...fade(0.25)} className="mb-12">
-        <SectionTitle icon={<FaMoneyCheckAlt />} title="Fees & Admission" />
-        <div className="md:flex gap-6">
-          <div className="md:w-2/3">
-            <Accordion title="Admission Requirements">
-              <ul className="list-disc ml-5">
-                <li>Copies of previous Academic Certificates</li>
-                <li>Copy of National ID / Passport / Birth Certificate</li>
-                <li>2 Passport Size Photographs</li>
-                <li>Registration Fee: <b>Ksh 1,000 (non-refundable)</b></li>
-                <li>Student ID Card Fee: <b>Ksh 300</b></li>
-              </ul>
-            </Accordion>
-
-            <Accordion title="Miscellaneous Payments">
-              <ul className="list-disc ml-5">
-                <li>CAT Fee: Ksh 500 / term</li>
-                <li>Activity Fee: Ksh 1,000 / term</li>
-                <li>Attachment Fee: Ksh 2,200 (once)</li>
-                <li>Business Plan Fee (KNEC students): Ksh 1,000</li>
-                <li>Note: No personal cheques accepted. Fees non-refundable.</li>
-              </ul>
-            </Accordion>
-
-            <Accordion title="Payment Details">
-              <div className="text-sm">
-                <p><b>Bank Deposit</b></p>
-                <p>Account Name: REGIONAL CURRICULUM MGT. COLLAGE</p>
-                <p>Bank: KCB</p>
-                <p>Account No: 1269027271</p>
-                <div className="mt-3">
-                  <p><b>Paybill</b></p>
-                  <p>Paybill: 522522</p>
-                  <p>Account No: 1269027271</p>
-                </div>
-              </div>
-            </Accordion>
-          </div>
-
-          <div className="md:w-1/3 mt-4 md:mt-0">
-            <div className="p-4 rounded-lg" style={{ background: COLORS.surfaceLight, boxShadow: `0 8px 20px ${COLORS.shadow}` }}>
-              <h4 style={{ fontFamily: FONT.semiBold, color: COLORS.primaryDark }}>Quick Notes</h4>
-              <ul className="mt-2 text-sm text-gray-700 list-disc ml-5">
-                <li>Instalments due by 5th of every month.</li>
-                <li>Fees inclusive of block release / revision classes.</li>
-                <li>Single subject registration is subject to approval.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Class Schedule (timeline) */}
+      {/* Class Schedule */}
       <motion.section {...fade(0.3)} className="mb-12">
-        <SectionTitle icon={<FaGlobe />} title="Class Schedule" />
+        <SectionTitle icon={<FaClock />} title="Class Schedule" />
         <div className="space-y-3">
           {[
             { label: "Early Morning", time: "6:15am – 7:45am" },
@@ -489,6 +390,71 @@ export default function IctPage() {
           ))}
         </div>
       </motion.section>
+
+      {/* TUITION INFO CARD */}
+      <motion.section {...fade(0.4)}>
+        <div
+          className="p-6 rounded-xl flex items-center gap-4 justify-between"
+          style={{
+            background: COLORS.surfaceLight,
+            boxShadow: `0 8px 20px ${COLORS.shadow}`,
+            borderRadius: CARD.default.borderRadius,
+            border: `1px solid ${COLORS.border}`,
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="p-3 rounded-full"
+              style={{
+                background: `${COLORS.primary}15`,
+                color: COLORS.primary,
+              }}
+            >
+              <FaInfoCircle size={22} />
+            </div>
+
+            <div>
+              <div
+                style={{
+                  fontFamily: FONT.medium,
+                  color: COLORS.primaryDark,
+                }}
+              >
+                Tuition Info
+              </div>
+              <div className="text-sm text-gray-600">
+                Available upon request
+              </div>
+            </div>
+          </div>
+
+          <a
+            href="/contact"
+            className="px-4 py-2 rounded-lg text-sm shadow-sm"
+            style={{
+              background: BUTTON.primary.backgroundColor,
+              color: BUTTON.primary.textColor,
+            }}
+          >
+            Request Info
+          </a>
+        </div>
+      </motion.section>
+
+      {/* CTA */}
+      <motion.div {...fade(0.45)} className="text-center mt-12">
+        <Link
+          href="/join-us"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg shadow-md"
+          style={{
+            background: BUTTON.primary.backgroundColor,
+            color: BUTTON.primary.textColor,
+          }}
+        >
+          Apply Now
+        </Link>
+      </motion.div>
+
     </main>
   );
 }

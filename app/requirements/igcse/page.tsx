@@ -1,20 +1,14 @@
-// app/igcse/page.tsx
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import THEME from "@/utils/theme";
 import {
   FaGlobe,
   FaBook,
   FaSchool,
-  FaChevronDown,
-  FaChevronUp,
-  FaMoneyCheckAlt,
   FaDownload,
-  FaMapMarkerAlt,
-  FaPhoneAlt,
-  FaEnvelope,
+  FaInfoCircle,
 } from "react-icons/fa";
 
 const { COLORS, FONT, TEXT, BUTTON, CARD } = THEME;
@@ -38,8 +32,10 @@ const pop = (d = 0) => ({
 /* -------------------------
    Reusable UI components
    ------------------------- */
-
-const SectionTitle: React.FC<{ icon?: React.ReactNode; title: string }> = ({ icon, title }) => (
+const SectionTitle: React.FC<{ icon?: React.ReactNode; title: string }> = ({
+  icon,
+  title,
+}) => (
   <div className="flex items-center gap-3 mb-4">
     {icon && (
       <div
@@ -84,23 +80,18 @@ const igcseSubjects = [
   "ICT",
 ];
 
-const feeEstimates = [
-  { level: "IGCSE (Year 10)", perTerm: "KES 120,000 – 180,000" },
-  { level: "IGCSE (Year 11)", perTerm: "KES 120,000 – 180,000" },
-  { level: "Registration & Exam Fees", perTerm: "As per Cambridge and centre requirements" },
-];
-
 /* -------------------------
    Page
    ------------------------- */
-
 export default function IgcsePage() {
   return (
     <main
       className="min-h-screen px-6 md:px-16 py-12"
       style={{
         fontFamily: FONT.regular,
-        background: `linear-gradient(135deg, ${COLORS.gradientBackground.join(", ")})`,
+        background: `linear-gradient(135deg, ${COLORS.gradientBackground.join(
+          ", "
+        )})`,
         color: COLORS.textDark,
       }}
     >
@@ -183,7 +174,10 @@ export default function IgcsePage() {
 
       {/* ABOUT */}
       <motion.section {...fade(0.08)} className="mb-10">
-        <SectionTitle icon={<FaBook />} title="About IGCSE at Right Path Schools" />
+        <SectionTitle
+          icon={<FaBook />}
+          title="About IGCSE at Right Path Schools"
+        />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <motion.div
             {...pop(0.05)}
@@ -193,9 +187,7 @@ export default function IgcsePage() {
               boxShadow: `0 8px 20px ${COLORS.shadow}`,
             }}
           >
-            <h4
-              style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}
-            >
+            <h4 style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>
               World-Class Curriculum
             </h4>
             <p className="text-sm text-gray-700 mt-2">
@@ -213,9 +205,7 @@ export default function IgcsePage() {
               boxShadow: `0 8px 20px ${COLORS.shadow}`,
             }}
           >
-            <h4
-              style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}
-            >
+            <h4 style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>
               Why Choose Us
             </h4>
             <p className="text-sm text-gray-700 mt-2">
@@ -233,9 +223,7 @@ export default function IgcsePage() {
               boxShadow: `0 8px 20px ${COLORS.shadow}`,
             }}
           >
-            <h4
-              style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}
-            >
+            <h4 style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}>
               Pathway to Global Opportunities
             </h4>
             <p className="text-sm text-gray-700 mt-2">
@@ -270,83 +258,58 @@ export default function IgcsePage() {
         </div>
       </motion.section>
 
-      {/* FEES */}
-      <motion.section {...fade(0.16)} className="mb-12">
-        <SectionTitle icon={<FaMoneyCheckAlt />} title="Fee Structure" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {feeEstimates.map((f, i) => (
-            <motion.div
-              key={i}
-              {...pop(i * 0.04)}
-              className="p-4 rounded-lg"
+      {/* TUITION INFO CARD */}
+      <motion.section {...fade(0.4)}>
+        <div
+          className="p-6 rounded-xl flex items-center gap-4 justify-between"
+          style={{
+            background: COLORS.surfaceLight,
+            boxShadow: `0 8px 20px ${COLORS.shadow}`,
+            borderRadius: CARD.default.borderRadius,
+            border: `1px solid ${COLORS.border}`,
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="p-3 rounded-full"
               style={{
-                background: COLORS.surfaceLight,
-                boxShadow: `0 8px 20px ${COLORS.shadow}`,
+                background: `${COLORS.primary}15`,
+                color: COLORS.primary,
               }}
             >
+              <FaInfoCircle size={22} />
+            </div>
+
+            <div>
               <div
-                style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}
+                style={{
+                  fontFamily: FONT.medium,
+                  color: COLORS.primaryDark,
+                }}
               >
-                {f.level}
+                Tuition Info
               </div>
-              <div className="text-sm text-gray-700 mt-2">{f.perTerm}</div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
+              <div className="text-sm text-gray-600">
+                Available upon request
+              </div>
+            </div>
+          </div>
 
-      {/* PAYMENT DETAILS */}
-      <motion.section {...fade(0.2)} className="mb-12">
-        <SectionTitle icon={<FaMoneyCheckAlt />} title="Payment & Registration" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <motion.div
-            {...pop(0.03)}
-            className="p-4 rounded-lg"
+          <a
+            href="/contact"
+            className="px-4 py-2 rounded-lg text-sm shadow-sm"
             style={{
-              background: COLORS.surfaceLight,
-              boxShadow: `0 8px 20px ${COLORS.shadow}`,
+              background: BUTTON.primary.backgroundColor,
+              color: BUTTON.primary.textColor,
             }}
           >
-            <div
-              style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}
-            >
-              MPESA / Paybill
-            </div>
-            <div className="text-sm text-gray-700 mt-2">
-              <b>Paybill:</b> 222111
-              <br />
-              <b>Account:</b> 2639664
-              <br />
-              <b>Name:</b> Right Path Schools
-            </div>
-          </motion.div>
-
-          <motion.div
-            {...pop(0.06)}
-            className="p-4 rounded-lg"
-            style={{
-              background: COLORS.surfaceLight,
-              boxShadow: `0 8px 20px ${COLORS.shadow}`,
-            }}
-          >
-            <div
-              style={{ fontFamily: FONT.medium, color: COLORS.primaryDark }}
-            >
-              Bank Deposit
-            </div>
-            <div className="text-sm text-gray-700 mt-2">
-              <b>Bank:</b> Family Bank
-              <br />
-              <b>Account No:</b> 038000048169
-              <br />
-              <b>Account Name:</b> Right Path Schools
-            </div>
-          </motion.div>
+            Request Info
+          </a>
         </div>
       </motion.section>
 
       {/* CTA */}
-      <motion.div {...fade(0.24)} className="text-center mt-8">
+      <motion.div {...fade(0.24)} className="text-center mt-12">
         <a
           href="/join-us"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-lg shadow-md"
